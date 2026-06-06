@@ -1,1 +1,8 @@
 /target
+
+# Private documentation — kept locally, not published.
+/docs
+
+# Compiled example programs.
+/examples/leak
+/examples/grow

@@ -2,6 +2,22 @@
 name = "mknight"
 version = "0.1.0"
 edition = "2024"
+authors = ["Francisco Brito"]
+description = "A user-space sandbox watcher that stops runaway malloc loops from freezing your machine, with an educational post-mortem."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/FranciscoJBrito/mknight"
+homepage = "https://github.com/FranciscoJBrito/mknight"
+keywords = ["memory", "oom", "sandbox", "cli", "education"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = [
+    "CLAUDE.md",
+    "Dockerfile",
+    ".dockerignore",
+    "examples/leak",
+    "examples/grow",
+    "docs",
+]
 
 [dependencies]
 clap = { version = "4.6.1", features = ["derive"] }

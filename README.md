@@ -83,13 +83,14 @@ hot, fast-growing leaks and produces the analytics.
 Requires a [Rust toolchain](https://rustup.rs/) (stable).
 
 ```bash
-git clone <your-repo-url> memoryknight
-cd memoryknight
-cargo build --release
-# binary at ./target/release/mknight
+# Once published to crates.io:
+cargo install mknight
 
-# or install it on your PATH:
-cargo install --path .
+# Or build from source:
+git clone https://github.com/FranciscoJBrito/mknight
+cd mknight
+cargo build --release        # binary at ./target/release/mknight
+cargo install --path .       # or install it on your PATH
 ```
 
 ## Usage
@@ -164,14 +165,6 @@ where both layers work fully.
 
 ---
 
-## Roadmap
-
-**Phase 1 (MVP — done):** CLI, `setrlimit` wall, monitoring loop, kill heuristics,
-post-mortem report.
-
-**Phase 2 (planned):** Windows Job Objects, accurate `phys_footprint` on macOS,
-CPU-time guard, child output capture, JSON output mode, config file.
-
 ## Contributing
 
 Issues and pull requests are welcome. Please keep `cargo build`, `cargo clippy`,
@@ -180,4 +173,4 @@ supported platforms keep compiling.
 
 ## License
 
-MIT — add a `LICENSE` file before publishing.
+Licensed under the [MIT License](LICENSE).

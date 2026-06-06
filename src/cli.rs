@@ -1,5 +1,3 @@
-//! Command-line interface definition (clap derive).
-
 use clap::{Args, Parser, Subcommand};
 
 /// MemoryKnight — a user-space sandbox watcher that guards programs against
@@ -23,8 +21,7 @@ pub struct RunArgs {
     #[arg(long, value_name = "SIZE", default_value = "1GB")]
     pub max_ram: String,
 
-    /// Explosive-growth threshold, expressed per second. e.g. 5GB means 5 GB/s.
-    /// Defaults to ~500 MB / 100 ms if omitted.
+    /// Explosive-growth threshold per second, e.g. 5GB. Defaults to ~500MB/100ms.
     #[arg(long, value_name = "SIZE")]
     pub max_velocity: Option<String>,
 
@@ -45,10 +42,6 @@ pub struct RunArgs {
     pub program: String,
 
     /// Arguments forwarded to the program (everything after PROGRAM).
-    #[arg(
-        value_name = "ARGS",
-        trailing_var_arg = true,
-        allow_hyphen_values = true
-    )]
+    #[arg(value_name = "ARGS", trailing_var_arg = true, allow_hyphen_values = true)]
     pub args: Vec<String>,
 }

@@ -1,6 +1,3 @@
-//! MemoryKnight (`mknight`) — a user-space sandbox watcher that guards programs
-//! against runaway memory allocations.
-
 mod cli;
 mod config;
 mod limits;
@@ -33,15 +30,9 @@ fn main() {
     }
 }
 
-/// Resolve the request, supervise the child, and report. Returns the process
-/// exit code mknight should propagate.
 fn run(cfg: Config) -> Result<i32, String> {
     let on = stdout_color();
-    println!(
-        "{} guarding '{}'",
-        paint(on, "36", "[mknight]"),
-        cfg.program
-    );
+    println!("{} guarding '{}'", paint(on, "36", "[mknight]"), cfg.program);
     println!(
         "  max-ram {} · velocity {}/s · sample {} ms{}",
         format_size(cfg.max_ram),

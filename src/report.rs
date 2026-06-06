@@ -1,9 +1,3 @@
-//! Post-mortem reporting: the ANSI "autopsy card" shown when a run ends.
-//!
-//! The output adapts to how the child terminated (killed by the absolute limit,
-//! killed by velocity, clean exit, error exit, or crash signal) and includes an
-//! educational "System Guard Insight" tailored to the cause.
-
 use std::process::ExitStatus;
 
 use crate::config::Config;
@@ -13,14 +7,12 @@ use crate::term::{paint, stdout_color};
 
 const RULE: &str = "-------------------------------------------------------";
 
-/// Render the post-mortem for a finished run and return the exit code mknight
-/// should propagate.
 pub fn render(cfg: &Config, sup: &Supervision) -> i32 {
     let on = stdout_color();
     match &sup.outcome {
         Outcome::Killed(v) => {
             render_kill(cfg, sup, *v, on);
-            137 // 128 + SIGKILL(9)
+            137
         }
         Outcome::Exited(status) => render_exit(cfg, sup, status, on),
     }
@@ -95,7 +87,6 @@ fn render_exit(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool) -
     }
 }
 
-/// A child that ended via a signal we did not send (a crash, typically).
 fn render_signal(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool) -> i32 {
     let sig = signal_of(status);
 
@@ -113,15 +104,15 @@ fn render_signal(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool)
     print_stats_line(sup, on);
 
     if sig == Some(11) {
-        // SIGSEGV — on Linux this is often the program ignoring a NULL malloc.
         println!("  {}", paint(on, "1", "💡 System Guard Insight:"));
         println!("  A segmentation fault usually means your program read or wrote");
         println!("  memory it doesn't own.");
         if cfg.wall_active() {
+            println!("  Because the memory wall is active, `malloc`/`calloc` start returning");
             println!(
-                "  Because the memory wall is active, `malloc`/`calloc` start returning"
+                "  NULL once the {} cap is hit — dereferencing that NULL without",
+                format_size(cfg.max_ram)
             );
-            println!("  NULL once the {} cap is hit — dereferencing that NULL without", format_size(cfg.max_ram));
             println!("  checking it causes exactly this crash. Always check malloc's result.");
         }
     }
@@ -140,7 +131,6 @@ fn print_stats_line(sup: &Supervision, on: bool) {
     println!("  {}", paint(on, "2", &line));
 }
 
-/// A coarse severity label for an allocation rate (bytes/sec).
 fn velocity_label(bytes_per_sec: f64) -> &'static str {
     const MB: f64 = 1024.0 * 1024.0;
     const GB: f64 = 1024.0 * MB;

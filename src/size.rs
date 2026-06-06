@@ -1,23 +1,13 @@
-//! Human-readable byte-size parsing and formatting.
-//!
-//! Uses binary multipliers (1 KB = 1024 B), which match how memory is reported
-//! by the OS and how students tend to reason about RAM.
-
 const KIB: u64 = 1024;
 const MIB: u64 = 1024 * KIB;
 const GIB: u64 = 1024 * MIB;
 
-/// Parse a human size string like `"500MB"`, `"1.5GB"`, `"1024"`, `"2g"` into bytes.
-///
-/// Accepted units (case-insensitive): `B`, `K`/`KB`/`KIB`, `M`/`MB`/`MIB`,
-/// `G`/`GB`/`GIB`. A bare number is interpreted as bytes.
 pub fn parse_size(input: &str) -> Result<u64, String> {
     let s = input.trim();
     if s.is_empty() {
         return Err("empty size value".to_string());
     }
 
-    // Split into the leading numeric part and the trailing unit.
     let split = s
         .find(|c: char| !(c.is_ascii_digit() || c == '.'))
         .unwrap_or(s.len());
@@ -41,7 +31,6 @@ pub fn parse_size(input: &str) -> Result<u64, String> {
     Ok((value * multiplier as f64).round() as u64)
 }
 
-/// Format a byte count into a compact human string, e.g. `2.41 GB`.
 pub fn format_size(bytes: u64) -> String {
     let b = bytes as f64;
     if bytes >= GIB {
