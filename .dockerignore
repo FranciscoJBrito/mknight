@@ -1,0 +1,8 @@
+# Don't ship the host build artifacts into the image — they're macOS binaries,
+# large and useless inside a Linux container (cargo rebuilds from scratch).
+target/
+.git/
+
+# Compiled example binaries (rebuilt in the image).
+examples/leak
+examples/grow
