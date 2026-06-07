@@ -6,3 +6,4 @@
 # Compiled example programs.
 /examples/leak
 /examples/grow
+/examples/list_leak

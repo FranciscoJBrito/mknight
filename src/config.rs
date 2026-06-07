@@ -46,4 +46,8 @@ impl Config {
     pub fn wall_active(&self) -> bool {
         self.rlimit_requested && cfg!(target_os = "linux")
     }
+
+    pub fn wall_limit(&self) -> u64 {
+        self.max_ram.saturating_add(self.max_ram / 4)
+    }
 }

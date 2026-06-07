@@ -128,7 +128,7 @@ fn render_signal(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool)
             println!("  Because the memory wall is active, malloc/calloc start returning");
             println!(
                 "  NULL once the {} cap is hit - dereferencing that NULL without",
-                format_size(cfg.max_ram)
+                format_size(cfg.wall_limit())
             );
             println!("  checking it causes exactly this crash. Always check malloc's result.");
         }

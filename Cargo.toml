@@ -16,6 +16,7 @@ exclude = [
     ".dockerignore",
     "examples/leak",
     "examples/grow",
+    "examples/list_leak",
     "docs",
     "cliff.toml",
     "cog.toml",

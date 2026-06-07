@@ -48,7 +48,7 @@ pub fn build_command(cfg: &Config) -> Command {
     let mut cmd = Command::new(&cfg.program);
     cmd.args(&cfg.args);
     if cfg.rlimit_requested {
-        limits::install_memory_wall(&mut cmd, cfg.max_ram);
+        limits::install_memory_wall(&mut cmd, cfg.wall_limit());
     }
     cmd
 }
@@ -70,7 +70,7 @@ pub fn supervise(cfg: &Config) -> Result<Supervision, String> {
     if cfg.wall_active() {
         println!(
             "{tag_out} memory wall active: RLIMIT_AS = {}",
-            format_size(cfg.max_ram)
+            format_size(cfg.wall_limit())
         );
     }
 

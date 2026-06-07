@@ -23,12 +23,13 @@ COPY . .
 # Build the release binary and the example C programs.
 RUN cargo build --release \
     && gcc examples/leak.c -o examples/leak \
+    && gcc examples/list_leak.c -o examples/list_leak \
     && gcc -O2 examples/grow.c -o examples/grow
 
 # Put mknight on PATH for convenient interactive use.
 RUN install -m 0755 target/release/mknight /usr/local/bin/mknight
 
-# Default: demonstrate the wall. The leaker hits the 200 MB RLIMIT_AS cap,
-# malloc() returns NULL, and the program exits cleanly with an error message —
-# no thrashing, no frozen machine.
-CMD ["mknight", "run", "--max-ram", "200MB", "examples/leak"]
+# Default: demonstrate Layer 2 killing a runaway leak. The unbounded list grows
+# past the 200 MB ceiling and mknight's monitor terminates it with a post-mortem;
+# the setrlimit wall (at 1.25x max-ram) stays as a higher backstop.
+CMD ["mknight", "run", "--max-ram", "200MB", "examples/list_leak"]
