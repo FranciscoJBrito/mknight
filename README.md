@@ -20,7 +20,7 @@ misplaced `while` + `malloc()` is a rite of passage.
                        __/ |                      | |
                       |___/                       |_|
 
-  [!] PROCESS TERMINATED TO SAVE YOUR SYSTEM
+[!] PROCESS TERMINATED TO SAVE YOUR SYSTEM
 
 The program `./exercise` was aborted because it violated
 the safety policy: [Explosive Growth Velocity Detected].

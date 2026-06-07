@@ -34,7 +34,7 @@ fn render_kill(cfg: &Config, sup: &Supervision, v: Violation, on: bool) {
     println!();
     println!(
         "{}",
-        paint(on, "1;31", "  [!] PROCESS TERMINATED TO SAVE YOUR SYSTEM")
+        paint(on, "1;31", "[!] PROCESS TERMINATED TO SAVE YOUR SYSTEM")
     );
     println!();
 
