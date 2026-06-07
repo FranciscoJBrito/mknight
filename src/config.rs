@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::cli::RunArgs;
+use crate::cli::Cli;
 use crate::size::parse_size;
 
 pub const DEFAULT_MAX_VELOCITY_BYTES_PER_SEC: u64 = 500 * 1024 * 1024 * 10;
@@ -17,7 +17,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from_args(args: RunArgs) -> Result<Self, String> {
+    pub fn from_args(args: Cli) -> Result<Self, String> {
         let max_ram = parse_size(&args.max_ram)?;
         if max_ram == 0 {
             return Err("--max-ram must be greater than zero".to_string());

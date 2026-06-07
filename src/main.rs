@@ -8,7 +8,7 @@ mod term;
 
 use clap::Parser;
 
-use crate::cli::{Cli, Commands};
+use crate::cli::Cli;
 use crate::config::Config;
 use crate::size::format_size;
 use crate::term::{paint, stdout_color};
@@ -16,9 +16,7 @@ use crate::term::{paint, stdout_color};
 fn main() {
     let cli = Cli::parse();
 
-    let result = match cli.command {
-        Commands::Run(args) => Config::from_args(args).and_then(run),
-    };
+    let result = Config::from_args(cli).and_then(run);
 
     match result {
         Ok(code) => std::process::exit(code),

@@ -29,7 +29,8 @@ RUN cargo build --release \
 # Put mknight on PATH for convenient interactive use.
 RUN install -m 0755 target/release/mknight /usr/local/bin/mknight
 
-# Default: demonstrate Layer 2 killing a runaway leak. The unbounded list grows
-# past the 200 MB ceiling and mknight's monitor terminates it with a post-mortem;
-# the setrlimit wall (at 1.25x max-ram) stays as a higher backstop.
-CMD ["mknight", "run", "--max-ram", "200MB", "examples/list_leak"]
+# Default: demonstrate Layer 2's post-mortem. `grow` climbs steadily past the
+# 200 MB ceiling and mknight's monitor terminates it with the autopsy card; the
+# setrlimit wall (1.25x max-ram) stays as a higher backstop. For the fast-leak
+# path that exercises the wall, try: examples/list_leak
+CMD ["mknight", "--max-ram", "200MB", "examples/grow", "1000"]

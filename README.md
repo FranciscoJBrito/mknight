@@ -112,20 +112,57 @@ It installs to `~/.local/bin` (override with `MKNIGHT_INSTALL_DIR`). You can als
 download the binary manually from the
 [Releases](https://github.com/FranciscoJBrito/mknight/releases) page.
 
+### Adding `~/.local/bin` to your PATH
+
+If the installer warns that `~/.local/bin` is not on your `PATH`, add it. Not sure
+which shell you use? Run `echo $SHELL`, then pick the matching line:
+
+```bash
+# bash — appends to ~/.bashrc
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+
+# zsh — appends to ~/.zshrc
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+```fish
+# fish — manages PATH its own way
+fish_add_path ~/.local/bin
+```
+
+Then open a new terminal (or run the `source` line above) and `mknight --help`
+should work.
+
+## Updating
+
+`mknight` doesn't auto-update. To get the latest version, re-run the same method
+you installed with:
+
+| Installed via | Update with |
+|---|---|
+| crates.io | `cargo install mknight` (upgrades to the latest; add `--force` to reinstall the same version) |
+| `cargo-binstall` | `cargo binstall mknight` |
+| Linux `curl` script | re-run `curl -fsSL https://raw.githubusercontent.com/FranciscoJBrito/mknight/main/install.sh \| sh` (it overwrites the binary in place) |
+| Prebuilt binary (manual) | download the new one from [Releases](https://github.com/FranciscoJBrito/mknight/releases) and replace it |
+| Built from source | `git pull && cargo install --path .` |
+
+Check your current version with `mknight --version`. Tip: stick to one install
+method to avoid having two copies on your `PATH`.
+
 ## Usage
 
 ```bash
 # Basic — smart defaults (max 1 GB, or explosive growth)
-mknight run ./my_c_program
+mknight ./my_c_program
 
 # Custom absolute ceiling
-mknight run --max-ram 500MB ./my_c_program
+mknight --max-ram 500MB ./my_c_program
 
 # Forward arguments to your program (everything after the program name)
-mknight run ./exercise arg1 arg2
+mknight ./exercise arg1 arg2
 
 # Watch and report, but never kill (build trust / debugging)
-mknight run --report-only ./my_c_program
+mknight --report-only ./my_c_program
 ```
 
 ### Options
@@ -155,12 +192,12 @@ The repo ships two test programs under `examples/`:
 ```bash
 # Bounded grower — safe to run anywhere; great for seeing the monitor live:
 gcc -O2 examples/grow.c -o examples/grow
-mknight run --max-ram 200MB examples/grow 1000   # killed at the 200 MB ceiling
+mknight --max-ram 200MB examples/grow 1000   # killed at the 200 MB ceiling
 
 # Deliberate unbounded leaker — best run on Linux, where the wall makes
 # malloc() return NULL cleanly:
 gcc examples/leak.c -o examples/leak
-mknight run --max-ram 200MB examples/leak
+mknight --max-ram 200MB examples/leak
 ```
 
 ---

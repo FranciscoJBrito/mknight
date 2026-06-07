@@ -61,11 +61,23 @@ case ":$PATH:" in
     *":$BINDIR:"*) ;;
     *)
         echo ""
-        echo "note: $BINDIR is not in your PATH. Add it with:"
-        echo "  echo 'export PATH=\"$BINDIR:\$PATH\"' >> ~/.bashrc   # or ~/.zshrc"
-        echo "then restart your shell."
+        echo "note: $BINDIR is not in your PATH yet. Add it for your shell:"
+        case "${SHELL##*/}" in
+            zsh)
+                echo "  echo 'export PATH=\"$BINDIR:\$PATH\"' >> ~/.zshrc && source ~/.zshrc"
+                ;;
+            fish)
+                echo "  fish_add_path $BINDIR"
+                ;;
+            *)
+                echo "  echo 'export PATH=\"$BINDIR:\$PATH\"' >> ~/.bashrc && source ~/.bashrc"
+                ;;
+        esac
+        echo "(then open a new terminal if the command still isn't found)"
         ;;
 esac
 
 echo ""
-echo "Done. Try:  $BIN --help"
+printf 'Installed: '
+"$BINDIR/$BIN" --version || true
+echo "Try:  $BIN --help"
