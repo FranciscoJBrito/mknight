@@ -124,7 +124,7 @@ pub fn supervise(cfg: &Config) -> Result<Supervision, String> {
                 if cfg.report_only {
                     if !warned {
                         eprintln!(
-                            "{} ⚠ would terminate: {} (report-only)",
+                            "{} [!] would terminate: {} (report-only)",
                             paint(err_on, "33", "[mknight]"),
                             v.reason()
                         );
@@ -140,7 +140,7 @@ pub fn supervise(cfg: &Config) -> Result<Supervision, String> {
 
             if now.duration_since(last_status) >= Duration::from_millis(250) {
                 eprintln!(
-                    "{} live · rss {} · peak {} · vel {}/s",
+                    "{} live | rss {} | peak {} | vel {}/s",
                     paint(err_on, "36", "[mknight]"),
                     format_size(rss),
                     format_size(stats.peak_rss),

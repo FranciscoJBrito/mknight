@@ -11,22 +11,31 @@ Built for **C/C++ students** learning dynamic memory management, where a single
 misplaced `while` + `malloc()` is a rite of passage.
 
 ```text
-⚠️  [mknight] PROCESS TERMINATED TO SAVE YOUR SYSTEM
--------------------------------------------------------
+  __  __ _          _       _     _     _____                       _
+ |  \/  | |        (_)     | |   | |   |  __ \                     | |
+ | \  / | | ___ __  _  __ _| |__ | |_  | |__) |___ _ __   ___  _ __| |_
+ | |\/| | |/ / '_ \| |/ _` | '_ \| __| |  _  // _ \ '_ \ / _ \| '__| __|
+ | |  | |   <| | | | | (_| | | | | |_  | | \ \  __/ |_) | (_) | |  | |_
+ |_|  |_|_|\_\_| |_|_|\__, |_| |_|\__| |_|  \_\___| .__/ \___/|_|   \__|
+                       __/ |                      | |
+                      |___/                       |_|
+
+  [!] PROCESS TERMINATED TO SAVE YOUR SYSTEM
+
 The program `./exercise` was aborted because it violated
 the safety policy: [Explosive Growth Velocity Detected].
 
-📊 Post-Mortem Analytics:
-  • Total Execution Time : 0.39 seconds
-  • Peak RAM Consumed    : 712.00 MB (limit 1.00 GB)
-  • Allocation Velocity  : ~1.95 GB/sec (Severe Leak)
+[*] Post-Mortem Analytics
+    - Total Execution Time : 0.39 seconds
+    - Peak RAM Consumed    : 712.00 MB (limit 1.00 GB)
+    - Allocation Velocity  : ~1.95 GB/sec (Severe Leak)
 
-💡 System Guard Insight:
-  Your program allocated memory explosively — a near-vertical curve.
-  This almost always means a loop calling `malloc()` or `calloc()`
-  with no matching `free()` and no exit condition. Check the bounds
-  of your `while`/`for` loops and make every allocation be released.
--------------------------------------------------------
+[i] System Guard Insight
+    Your program allocated memory explosively - a near-vertical curve.
+    This almost always means a loop calling malloc() or calloc() with
+    no matching free() and no exit condition. Check the bounds of your
+    while/for loops and make every allocation be released.
+======================================================================
 ```
 
 ---

@@ -5,7 +5,14 @@ use crate::monitor::{Outcome, Supervision, Violation};
 use crate::size::format_size;
 use crate::term::{paint, stdout_color};
 
-const RULE: &str = "-------------------------------------------------------";
+const BANNER: &str = r"  __  __ _          _       _     _     _____                       _
+ |  \/  | |        (_)     | |   | |   |  __ \                     | |
+ | \  / | | ___ __  _  __ _| |__ | |_  | |__) |___ _ __   ___  _ __| |_
+ | |\/| | |/ / '_ \| |/ _` | '_ \| __| |  _  // _ \ '_ \ / _ \| '__| __|
+ | |  | |   <| | | | | (_| | | | | |_  | | \ \  __/ |_) | (_) | |  | |_
+ |_|  |_|_|\_\_| |_|_|\__, |_| |_|\__| |_|  \_\___| .__/ \___/|_|   \__|
+                       __/ |                      | |
+                      |___/                       |_|";
 
 pub fn render(cfg: &Config, sup: &Supervision) -> i32 {
     let on = stdout_color();
@@ -20,12 +27,17 @@ pub fn render(cfg: &Config, sup: &Supervision) -> i32 {
 
 fn render_kill(cfg: &Config, sup: &Supervision, v: Violation, on: bool) {
     let s = &sup.stats;
+    let rule = "=".repeat(70);
 
+    println!();
+    println!("{}", paint(on, "1;31", BANNER));
+    println!();
     println!(
-        "\n{}",
-        paint(on, "1;31", "⚠️  [mknight] PROCESS TERMINATED TO SAVE YOUR SYSTEM")
+        "{}",
+        paint(on, "1;31", "  [!] PROCESS TERMINATED TO SAVE YOUR SYSTEM")
     );
-    println!("{RULE}");
+    println!();
+
     println!("The program `{}` was aborted because it violated", cfg.program);
     println!(
         "the safety policy: {}.",
@@ -33,28 +45,28 @@ fn render_kill(cfg: &Config, sup: &Supervision, v: Violation, on: bool) {
     );
     println!();
 
-    println!("{}", paint(on, "1", "📊 Post-Mortem Analytics:"));
+    println!("{}", paint(on, "1", "[*] Post-Mortem Analytics"));
     println!(
-        "  • Total Execution Time : {:.2} seconds",
+        "    - Total Execution Time : {:.2} seconds",
         s.duration.as_secs_f64()
     );
     println!(
-        "  • Peak RAM Consumed    : {} (limit {})",
+        "    - Peak RAM Consumed    : {} (limit {})",
         format_size(s.peak_rss),
         format_size(cfg.max_ram)
     );
     println!(
-        "  • Allocation Velocity  : ~{}/sec ({})",
+        "    - Allocation Velocity  : ~{}/sec ({})",
         format_size(s.peak_velocity as u64),
         velocity_label(s.peak_velocity)
     );
     println!();
 
-    println!("{}", paint(on, "1", "💡 System Guard Insight:"));
+    println!("{}", paint(on, "1", "[i] System Guard Insight"));
     for line in insight_lines(v, cfg) {
-        println!("  {line}");
+        println!("    {line}");
     }
-    println!("{RULE}");
+    println!("{}", paint(on, "1;31", &rule));
 }
 
 fn render_exit(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool) -> i32 {
@@ -62,7 +74,7 @@ fn render_exit(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool) -
         Some(0) => {
             println!(
                 "\n{}",
-                paint(on, "1;32", "✅ [mknight] Program completed cleanly.")
+                paint(on, "1;32", "[OK] mknight - program completed cleanly.")
             );
             print_stats_line(sup, on);
             0
@@ -73,13 +85,13 @@ fn render_exit(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool) -
                 paint(
                     on,
                     "1;33",
-                    &format!("⚠️  [mknight] Program exited with error code {code}.")
+                    &format!("[!] mknight - program exited with error code {code}.")
                 )
             );
             print_stats_line(sup, on);
             println!(
                 "  {} the non-zero exit code came from your program, not from mknight.",
-                paint(on, "2", "Note:")
+                paint(on, "2", "note:")
             );
             code
         }
@@ -98,19 +110,19 @@ fn render_signal(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool)
         paint(
             on,
             "1;31",
-            &format!("💥 [mknight] Program crashed (signal {sig_num} — {sig_name}).")
+            &format!("[X] mknight - program crashed (signal {sig_num} - {sig_name}).")
         )
     );
     print_stats_line(sup, on);
 
     if sig == Some(11) {
-        println!("  {}", paint(on, "1", "💡 System Guard Insight:"));
+        println!("  {}", paint(on, "1", "[i] System Guard Insight"));
         println!("  A segmentation fault usually means your program read or wrote");
         println!("  memory it doesn't own.");
         if cfg.wall_active() {
-            println!("  Because the memory wall is active, `malloc`/`calloc` start returning");
+            println!("  Because the memory wall is active, malloc/calloc start returning");
             println!(
-                "  NULL once the {} cap is hit — dereferencing that NULL without",
+                "  NULL once the {} cap is hit - dereferencing that NULL without",
                 format_size(cfg.max_ram)
             );
             println!("  checking it causes exactly this crash. Always check malloc's result.");
@@ -123,7 +135,7 @@ fn render_signal(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool)
 fn print_stats_line(sup: &Supervision, on: bool) {
     let s = &sup.stats;
     let line = format!(
-        "peak RAM {} · peak velocity {}/s · runtime {:.2}s",
+        "peak RAM {} | peak velocity {}/s | runtime {:.2}s",
         format_size(s.peak_rss),
         format_size(s.peak_velocity as u64),
         s.duration.as_secs_f64(),
@@ -154,10 +166,10 @@ fn insight_lines(v: Violation, cfg: &Config) -> Vec<String> {
             "free() what they take, or a structure that grows without bound.".to_string(),
         ],
         Violation::Velocity => vec![
-            "Your program allocated memory explosively — a near-vertical curve.".to_string(),
-            "This almost always means a loop calling `malloc()` or `calloc()`".to_string(),
-            "with no matching `free()` and no exit condition. Check the bounds".to_string(),
-            "of your `while`/`for` loops and make every allocation be released.".to_string(),
+            "Your program allocated memory explosively - a near-vertical curve.".to_string(),
+            "This almost always means a loop calling malloc() or calloc() with".to_string(),
+            "no matching free() and no exit condition. Check the bounds of your".to_string(),
+            "while/for loops and make every allocation be released.".to_string(),
         ],
     }
 }
