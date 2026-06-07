@@ -102,6 +102,16 @@ cargo build --release        # binary at ./target/release/mknight
 cargo install --path .       # or install it on your PATH
 ```
 
+On **Linux** (x86_64), install the prebuilt binary — no Rust toolchain needed:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/FranciscoJBrito/mknight/main/install.sh | sh
+```
+
+It installs to `~/.local/bin` (override with `MKNIGHT_INSTALL_DIR`). You can also
+download the binary manually from the
+[Releases](https://github.com/FranciscoJBrito/mknight/releases) page.
+
 ## Usage
 
 ```bash

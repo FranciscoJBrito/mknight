@@ -32,13 +32,21 @@ fn main() {
 
 fn run(cfg: Config) -> Result<i32, String> {
     let on = stdout_color();
-    println!("{} guarding '{}'", paint(on, "36", "[mknight]"), cfg.program);
+    println!(
+        "{} guarding '{}'",
+        paint(on, "36", "[mknight]"),
+        cfg.program
+    );
     println!(
         "  max-ram {} | velocity {}/s | sample {} ms{}",
         format_size(cfg.max_ram),
         format_size(cfg.max_velocity),
         cfg.interval.as_millis(),
-        if cfg.report_only { " · report-only" } else { "" }
+        if cfg.report_only {
+            " · report-only"
+        } else {
+            ""
+        }
     );
 
     let sup = monitor::supervise(&cfg)?;

@@ -38,7 +38,10 @@ fn render_kill(cfg: &Config, sup: &Supervision, v: Violation, on: bool) {
     );
     println!();
 
-    println!("The program `{}` was aborted because it violated", cfg.program);
+    println!(
+        "The program `{}` was aborted because it violated",
+        cfg.program
+    );
     println!(
         "the safety policy: {}.",
         paint(on, "33", &format!("[{}]", v.reason()))
@@ -103,7 +106,9 @@ fn render_signal(cfg: &Config, sup: &Supervision, status: &ExitStatus, on: bool)
     let sig = signal_of(status);
 
     let sig_name = sig.map(signal_name).unwrap_or("unknown");
-    let sig_num = sig.map(|s| s.to_string()).unwrap_or_else(|| "?".to_string());
+    let sig_num = sig
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| "?".to_string());
 
     println!(
         "\n{}",

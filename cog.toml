@@ -1,0 +1,14 @@
+# cocogitto — enforces Conventional Commits locally via a git hook.
+# Used here ONLY for commit-message validation; versioning/changelog are handled
+# by cargo-release + git-cliff.
+
+from_latest_tag = false
+ignore_merge_commits = true
+
+# Installed into .git/hooks/commit-msg with `cog install-hook commit-msg`.
+# Rejects a commit whose message isn't a valid Conventional Commit.
+[git_hooks.commit-msg]
+script = """#!/bin/sh
+set -e
+cog verify --file "$1"
+"""

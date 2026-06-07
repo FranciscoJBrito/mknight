@@ -1,0 +1,46 @@
+# Triggered by the tag that `cargo release` pushes (e.g. v0.2.0).
+# Publishing to crates.io is done locally by `cargo release`; this workflow
+# only creates the GitHub Release (with auto-generated notes) and uploads a
+# prebuilt Linux binary. It needs no secrets beyond the default GITHUB_TOKEN.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create release with auto-generated notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes --verify-tag
+
+  upload-binary:
+    name: Build & upload Linux binary
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build and upload binary
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: mknight
+          target: x86_64-unknown-linux-gnu
+          # Version-less name so the stable releases/latest/download URL works
+          # (used by install.sh). Produces mknight-x86_64-unknown-linux-gnu.tar.gz.
+          archive: mknight-$target
+          token: ${{ secrets.GITHUB_TOKEN }}

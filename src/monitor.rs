@@ -131,9 +131,8 @@ pub fn supervise(cfg: &Config) -> Result<Supervision, String> {
                         warned = true;
                     }
                 } else {
-                    terminate(&mut child).map_err(|e| {
-                        format!("failed to terminate child (pid {pid_raw}): {e}")
-                    })?;
+                    terminate(&mut child)
+                        .map_err(|e| format!("failed to terminate child (pid {pid_raw}): {e}"))?;
                     break Outcome::Killed(v);
                 }
             }

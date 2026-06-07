@@ -42,6 +42,10 @@ pub struct RunArgs {
     pub program: String,
 
     /// Arguments forwarded to the program (everything after PROGRAM).
-    #[arg(value_name = "ARGS", trailing_var_arg = true, allow_hyphen_values = true)]
+    #[arg(
+        value_name = "ARGS",
+        trailing_var_arg = true,
+        allow_hyphen_values = true
+    )]
     pub args: Vec<String>,
 }
